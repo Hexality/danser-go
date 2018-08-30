@@ -53,6 +53,7 @@ type SpriteBatch struct {
 	position   mgl32.Mat4
 	scale      mgl32.Mat4
 	transform  mgl32.Mat4
+	rotation   mgl32.Mat4
 }
 
 func NewSpriteBatch() *SpriteBatch {
@@ -61,6 +62,7 @@ func NewSpriteBatch() *SpriteBatch {
 	}
 	return &SpriteBatch{
 		mgl32.Vec4{1, 1, 1, 1},
+		mgl32.Ident4(),
 		mgl32.Ident4(),
 		mgl32.Ident4(),
 		mgl32.Ident4(),
@@ -91,6 +93,12 @@ func (batch *SpriteBatch) SetTranslation(vec bmath.Vector2d) {
 	shader.SetUniformAttr(3, batch.transform)
 }
 
+func (batch *SpriteBatch) SetRotation(rad float64) {
+	batch.rotation = mgl32.HomogRotate3DZ(float32(rad))
+	batch.transform = batch.position.Mul4(batch.rotation).Mul4(batch.scale)
+	shader.SetUniformAttr(3, batch.transform)
+}
+
 func (batch *SpriteBatch) SetScale(scaleX, scaleY float64) {
 	batch.scale = mgl32.Scale3D(float32(scaleX), float32(scaleY), 1)
 	batch.transform = batch.position.Mul4(batch.scale)
@@ -98,20 +106,21 @@ func (batch *SpriteBatch) SetScale(scaleX, scaleY float64) {
 }
 
 func (batch *SpriteBatch) SetSubScale(scaleX, scaleY float64) {
-	shader.SetUniformAttr(3, batch.position.Mul4(batch.scale.Mul4(mgl32.Scale3D(float32(scaleX), float32(scaleY), 1))))
+	shader.SetUniformAttr(3, batch.position.Mul4(batch.rotation).Mul4(batch.scale.Mul4(mgl32.Scale3D(float32(scaleX), float32(scaleY), 1))))
 }
 
 func (batch *SpriteBatch) ResetTransform() {
 	batch.scale = mgl32.Ident4()
 	batch.position = mgl32.Ident4()
 	batch.transform = mgl32.Ident4()
+	batch.rotation = mgl32.Ident4()
 	shader.SetUniformAttr(3, batch.transform)
 }
 
 func (batch *SpriteBatch) DrawTexture(vec bmath.Vector2d, texture *glhf.Texture) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	texture.Begin()
-	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.scale.Mul4(mgl32.Scale3D(float32(texture.Width())/2, float32(texture.Height())/2, 1)))
+	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.rotation).Mul4(batch.scale.Mul4(mgl32.Scale3D(float32(texture.Width())/2, float32(texture.Height())/2, 1)))
 	shader.SetUniformAttr(3, transf)
 	shader.SetUniformAttr(1, int32(0))
 
@@ -131,7 +140,7 @@ func (batch *SpriteBatch) DrawUnscaled(vec bmath.Vector2d, texture *glhf.Texture
 }
 
 func (batch *SpriteBatch) DrawUnit(vec bmath.Vector2d, unit int) {
-	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.scale)
+	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.rotation).Mul4(batch.scale)
 	shader.SetUniformAttr(3, transf)
 	shader.SetUniformAttr(1, int32(unit))
 
@@ -146,7 +155,7 @@ func (batch *SpriteBatch) DrawUnitR(unit int) {
 }
 
 func (batch *SpriteBatch) DrawSeparate(vec bmath.Vector2d, unit int) {
-	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.scale)
+	transf := (batch.position.Mul4(mgl32.Translate3D(float32(vec.X), float32(vec.Y), 0))).Mul4(batch.rotation).Mul4(batch.scale)
 	shader.SetUniformAttr(3, transf)
 	shader.SetUniformAttr(1, int32(unit))
 

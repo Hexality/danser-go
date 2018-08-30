@@ -15,11 +15,14 @@ func GetObject(data []string) BaseObject {
 		} else {
 			return sl
 		}
+	} else if (objType & SPINNER) > 0 {
+		return NewSpinner(data)
 	}
 	return nil
 }
 
 const (
-	CIRCLE int64 = 1
-	SLIDER int64 = 2
+	CIRCLE  int64 = 1
+	SLIDER  int64 = 2
+	SPINNER int64 = 8
 )

@@ -103,12 +103,7 @@ func parseHitObjects(line []string, beatMap *BeatMap) {
 	obj := objects.GetObject(line)
 
 	if obj != nil {
-		if o, ok := obj.(*objects.Slider); ok {
-			o.SetTiming(beatMap.Timings)
-		}
-		if o, ok := obj.(*objects.Circle); ok {
-			o.SetTiming(beatMap.Timings)
-		}
+		obj.SetTiming(beatMap.Timings)
 		beatMap.HitObjects = append(beatMap.HitObjects, obj)
 	}
 }

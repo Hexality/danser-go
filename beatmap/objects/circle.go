@@ -84,6 +84,15 @@ func BeginCircleRender() {
 
 	gl.ActiveTexture(gl.TEXTURE2)
 	render.ApproachCircle.Begin()
+
+	gl.ActiveTexture(gl.TEXTURE3)
+	render.SpinnerMiddle.Begin()
+
+	gl.ActiveTexture(gl.TEXTURE4)
+	render.SpinnerMiddle2.Begin()
+
+	gl.ActiveTexture(gl.TEXTURE5)
+	render.SpinnerAC.Begin()
 }
 
 func EndCircleRender() {

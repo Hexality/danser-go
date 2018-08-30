@@ -32,7 +32,7 @@ type Player struct {
 	progressMs     int64
 	batch          *render.SpriteBatch
 	controller     dance.Controller
-	circles        []*objects.Circle
+	circles        []objects.CommonRender
 	sliders        []*objects.Slider
 	Background     *glhf.Texture
 	Logo           *glhf.Texture
@@ -319,7 +319,7 @@ func (pl *Player) Update() {
 				if s, ok := p.(*objects.Slider); ok {
 					pl.sliders = append(pl.sliders, s)
 				}
-				if s, ok := p.(*objects.Circle); ok {
+				if s, ok := p.(objects.CommonRender); ok {
 					pl.circles = append(pl.circles, s)
 				}
 

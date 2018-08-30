@@ -15,6 +15,9 @@ var SliderBall *glhf.Texture
 var CursorTex *glhf.Texture
 var CursorTop *glhf.Texture
 var CursorTrail *glhf.Texture
+var SpinnerMiddle *glhf.Texture
+var SpinnerMiddle2 *glhf.Texture
+var SpinnerAC *glhf.Texture
 
 func LoadTextures() {
 	Circle, _ = utils.LoadTexture("assets/textures/hitcircle.png")
@@ -26,5 +29,8 @@ func LoadTextures() {
 	SliderBall, _ = utils.LoadTexture("assets/textures/sliderball.png")
 	CursorTex, _ = utils.LoadTexture("assets/textures/cursor.png")
 	CursorTop, _ = utils.LoadTexture("assets/textures/cursor-top.png")
-	CursorTrail, _ = utils.LoadTextureU("assets/textures/cursortrail.png")
+	CursorTrail, _ = utils.LoadTexture("assets/textures/cursortrail.png")
+	SpinnerMiddle, _ = utils.LoadTextureU("assets/textures/spinner-middle.png")
+	SpinnerMiddle2, _ = utils.LoadTextureU("assets/textures/spinner-middle2.png")
+	SpinnerAC, _ = utils.LoadTextureU("assets/textures/spinner-approachcircle.png")
 }
