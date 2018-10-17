@@ -4,11 +4,11 @@ import (
 	"math"
 	"github.com/wieku/danser/beatmap/objects"
 	"github.com/wieku/danser/bmath"
-	"github.com/wieku/danser/bmath/sliders"
+	"github.com/wieku/danser/bmath/curves"
 )
 
 type AxisMover struct {
-	bz                 sliders.SliderAlgo
+	bz                 curves.SliderAlgo
 	beginTime, endTime int64
 }
 
@@ -35,7 +35,7 @@ func (bm *AxisMover) SetObjects(objs []objects.BaseObject) {
 		midP = bmath.NewVec2d(startPos.X, endPos.Y)
 	}
 
-	bm.bz = sliders.NewSliderAlgo("L", []bmath.Vector2d{endPos, midP, startPos}, endPos.Dst(midP)+midP.Dst(startPos))
+	bm.bz = curves.NewSliderAlgo("L", []bmath.Vector2d{endPos, midP, startPos}, endPos.Dst(midP)+midP.Dst(startPos))
 	bm.endTime = endTime
 	bm.beginTime = startTime
 }

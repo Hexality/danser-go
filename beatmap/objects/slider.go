@@ -1,7 +1,7 @@
 package objects
 
 import (
-	"github.com/wieku/danser/bmath/sliders"
+	"github.com/wieku/danser/bmath/curves"
 	m2 "github.com/wieku/danser/bmath"
 	"strconv"
 	"strings"
@@ -25,7 +25,7 @@ type tickPoint struct {
 
 type Slider struct {
 	objData       *basicData
-	multiCurve    sliders.SliderAlgo
+	multiCurve    curves.SliderAlgo
 	Timings       *Timings
 	TPoint        TimingPoint
 	pixelLength   float64
@@ -62,7 +62,7 @@ func NewSlider(data []string) *Slider {
 		points = append(points, m2.NewVec2d(x, y))
 	}
 
-	slider.multiCurve = sliders.NewSliderAlgo(list[0], points, slider.pixelLength)
+	slider.multiCurve = curves.NewSliderAlgo(list[0], points, slider.pixelLength)
 
 	slider.objData.EndTime = slider.objData.StartTime
 	slider.objData.EndPos = slider.objData.StartPos

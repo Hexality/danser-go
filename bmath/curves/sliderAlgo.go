@@ -1,21 +1,19 @@
-package sliders
+package curves
 
 import (
-	m2 "github.com/wieku/danser/bmath"
-	"github.com/wieku/danser/bmath/curves"
 	"github.com/wieku/danser/bmath"
 	"math"
 )
 
 type SliderAlgo struct {
-	curves   []curves.Curve
+	curves   []Curve
 	sections []float64
 	length   float64
 	scale float64
 }
 
-func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) SliderAlgo {
-	var curveList []curves.Curve
+func NewSliderAlgo(typ string, points []bmath.Vector2d, desiredLength float64) SliderAlgo {
+	var curveList []Curve
 
 	var length float64 = 0.0
 	if len(points) < 3 {
@@ -23,7 +21,7 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 	}
 	switch typ {
 	case "P":
-		c := curves.NewCirArc(points[0], points[1], points[2])
+		c := NewCirArc(points[0], points[1], points[2])
 		if !c.Unstable {
 			curveList = append(curveList, c)
 			length += c.GetLength()
@@ -32,7 +30,7 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 		fallthrough
 	case "L":
 		for i := 1; i < len(points); i++ {
-			c := curves.NewLinear(points[i-1], points[i])
+			c := NewLinear(points[i-1], points[i])
 			curveList = append(curveList, c)
 			length += c.GetLength()
 		}
@@ -42,13 +40,13 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 		for i, p := range points {
 			if (i == len(points)-1 && p != points[i-1]) || (i < len(points)-1 && points[i+1] == p) {
 				pts := points[lastIndex : i+1]
-				var c curves.Curve
+				var c Curve
 				if len(pts) > 2 {
-					c = curves.NewBezier(pts)
+					c = NewBezier(pts)
 				} else if len(pts) == 1 {
-					c = curves.NewLinear(pts[0], pts[0])
+					c = NewLinear(pts[0], pts[0])
 				} else {
-					c = curves.NewLinear(pts[0], pts[1])
+					c = NewLinear(pts[0], pts[1])
 				}
 
 				curveList = append(curveList, c)
@@ -68,7 +66,7 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 		}
 
 		for i := 0; i < len(points)-3; i++ {
-			c := curves.NewCatmull(points[i : i+4])
+			c := NewCatmull(points[i : i+4])
 			curveList = append(curveList, c)
 			length += c.GetLength()
 		}
@@ -77,15 +75,17 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 
 	scale := -1.0
 
-	if length > desiredLength {
-		scale = desiredLength/length
-	} else if desiredLength > length {
-		last := curveList[len(curveList)-1]
-		p2 := last.PointAt(1)
-		p3 := bmath.NewVec2dRad(last.GetEndAngle()+math.Pi, desiredLength-length).Add(p2)
-		c := curves.NewLinear(p2, p3)
-		curveList = append(curveList, c)
-		length += c.GetLength()
+	if desiredLength >= 0 {
+		if length > desiredLength {
+			scale = desiredLength/length
+		} else if desiredLength > length {
+			last := curveList[len(curveList)-1]
+			p2 := last.PointAt(1)
+			p3 := bmath.NewVec2dRad(last.GetEndAngle()+math.Pi, desiredLength-length).Add(p2)
+			c := NewLinear(p2, p3)
+			curveList = append(curveList, c)
+			length += c.GetLength()
+		}
 	}
 
 	sections := make([]float64, len(curveList)+1)
@@ -101,7 +101,7 @@ func NewSliderAlgo(typ string, points []m2.Vector2d, desiredLength float64) Slid
 	return SliderAlgo{curveList, sections, length, scale}
 }
 
-func (sa *SliderAlgo) PointAt(t float64) m2.Vector2d {
+func (sa *SliderAlgo) PointAt(t float64) bmath.Vector2d {
 	if sa.scale > -0.5 {
 		t*=sa.scale
 	}
@@ -117,7 +117,7 @@ func (sa *SliderAlgo) PointAt(t float64) m2.Vector2d {
 		}
 	}
 
-	return m2.NewVec2d(512/2, 384/2)
+	return bmath.NewVec2d(512/2, 384/2)
 }
 
 func (sa *SliderAlgo) GetLength() float64 {

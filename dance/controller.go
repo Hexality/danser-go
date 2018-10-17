@@ -55,7 +55,7 @@ func (controller *GenericController) InitCursors() {
 
 	for i := range controller.cursors {
 		controller.cursors[i] = render.NewCursor()
-		controller.schedulers[i] = schedulers.NewGenericScheduler(Mover)
+		controller.schedulers[i] = schedulers.NewSmoothScheduler()/*NewGenericScheduler(Mover)*/
 	}
 
 	type Queue struct {
